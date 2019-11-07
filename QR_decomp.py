@@ -22,7 +22,7 @@ def QR_decomposition(A, m , n ):
         vector = []
         
         column = 0
-        while (column < matrix_multiply_matrix ):
+        while (column < m ):
             temp = []
             row = 0
             while (row < n):
@@ -47,17 +47,24 @@ def QR_decomposition(A, m , n ):
             vector_sum.append(0)
         
 
-        while ( vector_index < n ):
+        while ( vector_index < m ):
             x = vector_index
     
-            while(x < n):
+            while(x > 0):
                 print(x)
-                q_dot = vector_multiply_num( vector[x - 1], dot( vector[x - 1], vector[x] ) ) 
-                vector_add_vector(vector_sum, q_dot)
-                x = x + 1
+                q_dot = vector_multiply_num( Q[x - 1], dot( Q[x - 1], vector[vector_index] ) ) 
+                print( dot( Q[x - 1], vector[vector_index] ))
+                print(q_dot)
+                vector_sum = vector_add_vector(vector_sum, q_dot)
+                x = x - 1
+
             q = vector_subtract_vector( vector[vector_index], vector_sum )
+            print("SUB:",q )
             q_num = vector_divide_mag( q, get_magnitude_vector( q ) )
             Q.append(q_num)
+            vector_sum = []
+            for i in range(len(vector[0])):
+                vector_sum.append(0)
             vector_index = vector_index + 1
             
 
@@ -69,7 +76,7 @@ def QR_decomposition(A, m , n ):
 
        # Q = vector_combine_to_matrix(q_1, q_2)
         #convert vector array to matrix
-        Q = transpose(Q, n,m)
+        Q = transpose(Q, m,n)
         print("\n\nQ:")
         print_matrix(Q)
         
