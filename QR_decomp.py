@@ -51,17 +51,21 @@ def QR_decomposition(A, m , n ):
             x = vector_index
     
             while(x > 0):
-                print(x)
+                print("")
+                print("Current vector index", x)
+                print("Current index", n)
                 q_dot = vector_multiply_num( Q[x - 1], dot( Q[x - 1], vector[vector_index] ) ) 
-                print( dot( Q[x - 1], vector[vector_index] ))
-                print(q_dot)
+                print( "DOT:",dot( Q[x - 1], vector[vector_index] ))
+                print("MULTIPLY:",q_dot)
                 vector_sum = vector_add_vector(vector_sum, q_dot)
+                print("SUM:", vector_sum)
                 x = x - 1
 
             q = vector_subtract_vector( vector[vector_index], vector_sum )
             print("SUB:",q )
             q_num = vector_divide_mag( q, get_magnitude_vector( q ) )
             Q.append(q_num)
+            print_matrix(Q)
             vector_sum = []
             for i in range(len(vector[0])):
                 vector_sum.append(0)
@@ -80,7 +84,7 @@ def QR_decomposition(A, m , n ):
         print("\n\nQ:")
         print_matrix(Q)
         
-        tranpose_Q = transpose(Q, m,n)
+        tranpose_Q = transpose(Q, n,m)
         #print_matrix(tranpose_Q)
         m_n = get_new_m_n(tranpose_Q, A)
         
@@ -91,9 +95,9 @@ def QR_decomposition(A, m , n ):
 
 def vector_add_vector(vector_1, vector_2):
     result = []
-    for i in vector_1:
-        for x in vector_2:
-            result.append(i + x)
+    for i in range(len(vector_1)):
+        
+            result.append(vector_1[i] + vector_2[i])
     return result
 
 
