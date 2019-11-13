@@ -1,99 +1,110 @@
-
-
-
+import random
 
 def print_matrix(A):
-    print("__________________\n")
+    print("______________________________\n")
     for i in A:
-        print(i)
-    print("_________________\n")
+        print('      ', i)
+    print("______________________________\n")
 
 def QR_decomposition(A, m , n ):
     #m: row
-    #n: column
+    #n: column    
+    count = 0
 
-    if (m < n):
-        print("m is less than n, can't do QR decomp")
-    else: 
-
-        
-        count = 0
-
-        vector = []
-        
-        column = 0
-        while (column < m ):
-            temp = []
-            row = 0
-            while (row < n):
-                temp.append(A[row][column])
-                row+=1
-            column+=1
-            vector.append(temp)
-        print(vector)
-        
-        #vector_1 = [ A[0][0], A[1][0], A[2][0] ]
-        #vector_2 = [ A[0][1], A[1][1], A[2][1] ]
-        vector_1 = vector[0]
-        
-        Q = []
+    vector = []
+    
+    column = 0
+    while (column < n ):
+        temp = []
+        row = 0
+        while (row < m):
+            temp.append(A[row][column])
+            row+=1
+        column+=1
+        vector.append(temp)
+    print(vector)
+  
+    Q = []
 
 
-        q_1 = vector_divide_mag( vector[0], get_magnitude_vector( vector[0] ) )
-        Q.append(q_1)
-        vector_index = 1
+    q_1 = vector_divide_mag( vector[0], get_magnitude_vector( vector[0] ) )
+    Q.append(q_1)
+    vector_index = 1
+    vector_sum = []
+    for i in range(len(vector[0])):
+        vector_sum.append(0)
+    
+
+    while ( vector_index < n ):
+        x = vector_index
+
+        while(x > 0):
+          #  print("")
+          #  print("Current vector index", x)
+          #  print("Current index", n)
+            q_dot = vector_multiply_num( Q[x - 1], dot( Q[x - 1], vector[vector_index] ) ) 
+          #  print( "DOT:",dot( Q[x - 1], vector[vector_index] ))
+         #   print("MULTIPLY:",q_dot)
+            vector_sum = vector_add_vector(vector_sum, q_dot)
+         #   print("SUM:", vector_sum)
+            x = x - 1
+
+        q = vector_subtract_vector( vector[vector_index], vector_sum )
+      #  print("SUB:",q )
+        q_num = vector_divide_mag( q, get_magnitude_vector( q ) )
+        Q.append(q_num)
+        print_matrix(Q)
         vector_sum = []
         for i in range(len(vector[0])):
             vector_sum.append(0)
+        vector_index = vector_index + 1
         
 
-        while ( vector_index < m ):
-            x = vector_index
+
+    row = 0
+    column = 0
     
-            while(x > 0):
-                print(x)
-                q_dot = vector_multiply_num( Q[x - 1], dot( Q[x - 1], vector[vector_index] ) ) 
-                print( dot( Q[x - 1], vector[vector_index] ))
-                print(q_dot)
-                vector_sum = vector_add_vector(vector_sum, q_dot)
-                x = x - 1
+    
 
-            q = vector_subtract_vector( vector[vector_index], vector_sum )
-            print("SUB:",q )
-            q_num = vector_divide_mag( q, get_magnitude_vector( q ) )
-            Q.append(q_num)
-            vector_sum = []
-            for i in range(len(vector[0])):
-                vector_sum.append(0)
-            vector_index = vector_index + 1
-            
+    # Q = vector_combine_to_matrix(q_1, q_2)
+    #convert vector array to matrix
+    Q = transpose(Q, n,m)
+    for i in range(len(Q)):
+        for j in range(len(Q[0])):
+            if Q[i][j] <= 0.0005 and Q[i][j]*-1 < 0:
+                Q[i][j] = 0
+    print("\n\nQ:")
+    print_matrix(Q)
+    
+    tranpose_Q = transpose(Q, m,n)
+    #print_matrix(tranpose_Q)
+    m_n = get_new_m_n(tranpose_Q, A)
+    
+    R = matrix_multiply_matrix(tranpose_Q, A, m_n[0], m_n[1])
+    
+    for i in range(len(R)):
+        for j in range(len(R[0])):
+            if R[i][j] <= 0.0005:
+                R[i][j] = 0
 
 
-        row = 0
-        column = 0
-        
-        
+    print("\n\nR:")
+    print_matrix(R)
+    
+    print("\n\nVerification that Q * R = A:")     
+    print_matrix(matrix_multiply_matrix(Q,R,n,m))
+    
+    QR = []
+    QR.append(Q)
+    QR.append(R)
+    return QR
 
-       # Q = vector_combine_to_matrix(q_1, q_2)
-        #convert vector array to matrix
-        Q = transpose(Q, m,n)
-        print("\n\nQ:")
-        print_matrix(Q)
-        
-        tranpose_Q = transpose(Q, m,n)
-        #print_matrix(tranpose_Q)
-        m_n = get_new_m_n(tranpose_Q, A)
-        
-        R = matrix_multiply_matrix(tranpose_Q, A, m_n[0], m_n[1])
 
-        print("\n\nR:")
-        print_matrix(R)
 
 def vector_add_vector(vector_1, vector_2):
     result = []
-    for i in vector_1:
-        for x in vector_2:
-            result.append(i + x)
+    for i in range(len(vector_1)):
+         result.append(vector_1[i] + vector_2[i])
     return result
 
 
@@ -130,7 +141,7 @@ def matrix_multiply_matrix(matrix_1, matrix_2, m, n):
         # iterating by row of A 
     for i in range(len(matrix_1)): 
     
-        # iterating by coloum by B  
+        # iterating by column by B  
         for j in range(len(matrix_2[0])): 
     
             # iterating by rows of B 
@@ -194,10 +205,72 @@ def vector_divide_mag(vector_1, magnitude):
         result.append((float)(i/magnitude))
 
     return result
+
+
+def test_cases(A, ans):
+    print_matrix(A)
+    result =  True
+    for i in range(len(A)):
+        if A[i] != ans[i]:
+            result = False
+    return result
+
+def random_A(m,n):
+    result = []
+    for i in range(m):
+        temp = []
+        for x in range(n):
+            temp.append(random.randint(0,10))
+        result.append(temp)
         
+    return result
 
 if __name__ == "__main__":
-   # A = [[2,3],[2,4],[1,1]]
-    A = [[2,3, 1], [3,5,1]]
+    #A = [[2,3],[2,4],[1,1]], 
+    x = [   [2, 3, 1,],
+            [3, 5, 1], 
+            [6, 2, 2], 
+            [4, 3, 2],
+            [6, 9, 6],
+            [1, 1, 1,],
+            [2, 2, 2 ], 
+            [3, 3, 3 ], 
+            [4, 4, 4,],
+            [5, 5, 5 ], 
+            [6, 6, 6 ], 
+            [7, 7, 7,],
+            [8, 8, 8 ], 
+            [9, 9, 9 ], 
+            [10, 10, 10,],
+            [11, 11, 11 ], 
+            [12, 12, 12 ], 
+            [13, 13, 13,],
+            [14, 14, 14 ], 
+            [15, 15, 15],
+            [1, 1, 1,],
+            [2, 2, 2 ], 
+            [3, 3, 3 ], 
+            [4, 4, 4,],
+            [5, 5, 5 ], 
+            [6, 6, 6 ], 
+            [7, 7, 7,],
+            [8, 8, 8 ], 
+            [9, 9, 9 ], 
+            [10, 10, 10,],
+            [11, 11, 11 ], 
+            [12, 12, 12 ], 
+            [13, 13, 13,],
+            [14, 14, 14 ], 
+            [15, 15, 15], ] 
+            
+    #A = [[1, 1, 0], [1, 0, 1], [0, 1, 1]]
+    #A = [[2, -1, 1], [1, 3, -2], [0, 1, -2]]
+    # #####A = [[45, 30, -25], [30, -24, 68], [-25, 68, 80]]
+    #A = [[2, 3, 4, 1], [2, 1, 5, 3], [2, 4, 5, 4], [1, 4, 4, 6]]
+    #A = [[2, 4, 5], [2, 3, 5], [2, 2, 2], [3, 5, 6], [1, 2, 4]]
+    #A = [[6, -7, 2], [4, -5, 2], [1, -1, 1]]
+
+    A = random_A(20,500)
+
     print_matrix(A)
-    QR_decomposition(A,3,2)
+    QR_decomposition(A,len(A),len(A[0]))
