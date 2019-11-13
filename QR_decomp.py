@@ -270,7 +270,7 @@ if __name__ == "__main__":
     #A = [[2, 4, 5], [2, 3, 5], [2, 2, 2], [3, 5, 6], [1, 2, 4]]
     #A = [[6, -7, 2], [4, -5, 2], [1, -1, 1]]
 
-    A = random_A(20,500)
+    A = random_A(20,4)
 
     print_matrix(A)
     QR_decomposition(A,len(A),len(A[0]))
