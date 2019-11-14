@@ -22,7 +22,7 @@ def QR_decomposition(A, m , n ):
             row+=1
         column+=1
         vector.append(temp)
-    print(vector)
+    #print(vector)
   
     Q = []
 
@@ -53,7 +53,7 @@ def QR_decomposition(A, m , n ):
       #  print("SUB:",q )
         q_num = vector_divide_mag( q, get_magnitude_vector( q ) )
         Q.append(q_num)
-        print_matrix(Q)
+        #print_matrix(Q)
         vector_sum = []
         for i in range(len(vector[0])):
             vector_sum.append(0)
@@ -73,8 +73,8 @@ def QR_decomposition(A, m , n ):
         for j in range(len(Q[0])):
             if Q[i][j] <= 0.0005 and Q[i][j]*-1 < 0:
                 Q[i][j] = 0
-    print("\n\nQ:")
-    print_matrix(Q)
+    #print("\n\nQ:")
+    #print_matrix(Q)
     
     tranpose_Q = transpose(Q, m,n)
     #print_matrix(tranpose_Q)
@@ -82,17 +82,17 @@ def QR_decomposition(A, m , n ):
     
     R = matrix_multiply_matrix(tranpose_Q, A, m_n[0], m_n[1])
     
-    for i in range(len(R)):
-        for j in range(len(R[0])):
-            if R[i][j] <= 0.0005:
-                R[i][j] = 0
+    # for i in range(len(R)):
+        # for j in range(len(R[0])):
+            # if R[i][j] <= 0.0005:
+                # R[i][j] = 0
 
 
-    print("\n\nR:")
-    print_matrix(R)
+    #print("\n\nR:")
+    #print_matrix(R)
     
-    print("\n\nVerification that Q * R = A:")     
-    print_matrix(matrix_multiply_matrix(Q,R,n,m))
+    #print("\n\nVerification that Q * R = A:")     
+    #print_matrix(matrix_multiply_matrix(Q,R,n,m))
     
     QR = []
     QR.append(Q)
@@ -227,7 +227,7 @@ def random_A(m,n):
 
 if __name__ == "__main__":
     #A = [[2,3],[2,4],[1,1]], 
-    x = [   [2, 3, 1,],
+    A = [   [2, 3, 1,],
             [3, 5, 1], 
             [6, 2, 2], 
             [4, 3, 2],
@@ -270,7 +270,7 @@ if __name__ == "__main__":
     #A = [[2, 4, 5], [2, 3, 5], [2, 2, 2], [3, 5, 6], [1, 2, 4]]
     #A = [[6, -7, 2], [4, -5, 2], [1, -1, 1]]
 
-    A = random_A(20,4)
+    x = random_A(1000,3)
 
-    print_matrix(A)
-    QR_decomposition(A,len(A),len(A[0]))
+    print_matrix(x)
+    QR_decomposition(x,len(x),len(x[0]))
