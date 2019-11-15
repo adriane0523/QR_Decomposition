@@ -51,6 +51,7 @@ def QR_decomposition(A, m , n ):
 
         q = vector_subtract_vector( vector[vector_index], vector_sum )
       #  print("SUB:",q )
+       
         q_num = vector_divide_mag( q, get_magnitude_vector( q ) )
         Q.append(q_num)
         #print_matrix(Q)
@@ -69,10 +70,10 @@ def QR_decomposition(A, m , n ):
     # Q = vector_combine_to_matrix(q_1, q_2)
     #convert vector array to matrix
     Q = transpose(Q, n,m)
-    for i in range(len(Q)):
-        for j in range(len(Q[0])):
-            if Q[i][j] <= 0.0005 and Q[i][j]*-1 < 0:
-                Q[i][j] = 0
+#    for i in range(len(Q)):
+ #       for j in range(len(Q[0])):
+ #           if Q[i][j] <= 0.0005 and Q[i][j]*-1 < 0:
+ #               Q[i][j] = 0
     #print("\n\nQ:")
     #print_matrix(Q)
     
@@ -80,12 +81,12 @@ def QR_decomposition(A, m , n ):
     #print_matrix(tranpose_Q)
     m_n = get_new_m_n(tranpose_Q, A)
     
-    R = matrix_multiply_matrix(tranpose_Q, A, m_n[0], m_n[1])
+    R = matrix_multiply_matrix(tranpose_Q, A, len(tranpose_Q), len(A[0]))
     
-    # for i in range(len(R)):
-        # for j in range(len(R[0])):
-            # if R[i][j] <= 0.0005:
-                # R[i][j] = 0
+   # for i in range(len(R)):
+    #    for j in range(len(R[0])):
+     #       if R[i][j] <= 0.0005 and R[i][j] >= -0.0005 :
+      #          R[i][j] = 0
 
 
     #print("\n\nR:")
@@ -202,9 +203,12 @@ def get_magnitude_vector(vector_1):
 def vector_divide_mag(vector_1, magnitude):
     result = []
     for i in vector_1:
+     
         result.append((float)(i/magnitude))
 
     return result
+
+
 
 
 def test_cases(A, ans):
@@ -227,41 +231,9 @@ def random_A(m,n):
 
 if __name__ == "__main__":
     #A = [[2,3],[2,4],[1,1]], 
-    A = [   [2, 3, 1,],
-            [3, 5, 1], 
-            [6, 2, 2], 
-            [4, 3, 2],
-            [6, 9, 6],
-            [1, 1, 1,],
-            [2, 2, 2 ], 
-            [3, 3, 3 ], 
-            [4, 4, 4,],
-            [5, 5, 5 ], 
-            [6, 6, 6 ], 
-            [7, 7, 7,],
-            [8, 8, 8 ], 
-            [9, 9, 9 ], 
-            [10, 10, 10,],
-            [11, 11, 11 ], 
-            [12, 12, 12 ], 
-            [13, 13, 13,],
-            [14, 14, 14 ], 
-            [15, 15, 15],
-            [1, 1, 1,],
-            [2, 2, 2 ], 
-            [3, 3, 3 ], 
-            [4, 4, 4,],
-            [5, 5, 5 ], 
-            [6, 6, 6 ], 
-            [7, 7, 7,],
-            [8, 8, 8 ], 
-            [9, 9, 9 ], 
-            [10, 10, 10,],
-            [11, 11, 11 ], 
-            [12, 12, 12 ], 
-            [13, 13, 13,],
-            [14, 14, 14 ], 
-            [15, 15, 15], ] 
+    A = [  [5,4,6,],
+        [4,5,6],
+        [6,6,8] ] 
             
     #A = [[1, 1, 0], [1, 0, 1], [0, 1, 1]]
     #A = [[2, -1, 1], [1, 3, -2], [0, 1, -2]]
@@ -270,7 +242,11 @@ if __name__ == "__main__":
     #A = [[2, 4, 5], [2, 3, 5], [2, 2, 2], [3, 5, 6], [1, 2, 4]]
     #A = [[6, -7, 2], [4, -5, 2], [1, -1, 1]]
 
-    x = random_A(1000,3)
+    #x = random_A(1000,3)
 
-    print_matrix(x)
-    QR_decomposition(x,len(x),len(x[0]))
+    #print_matrix(x)
+    QR = QR_decomposition(A,len(A),len(A[0]))
+    print("Q:")
+    print_matrix(QR[0])
+    print("R:")
+    print_matrix(QR[1])
