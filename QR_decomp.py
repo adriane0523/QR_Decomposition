@@ -1,4 +1,5 @@
 import random
+from Inverse import *
 
 def print_matrix(A):
     print("______________________________\n")
@@ -81,19 +82,26 @@ def QR_decomposition(A, m , n ):
     #print_matrix(tranpose_Q)
     m_n = get_new_m_n(tranpose_Q, A)
     
-    R = matrix_multiply_matrix(tranpose_Q, A, len(tranpose_Q), len(A[0]))
+   # R = matrix_multiply_matrix(tranpose_Q, A, len(tranpose_Q), len(A[0]))
     
-   # for i in range(len(R)):
-    #    for j in range(len(R[0])):
-     #       if R[i][j] <= 0.0005 and R[i][j] >= -0.0005 :
-      #          R[i][j] = 0
-
+  
 
     #print("\n\nR:")
     #print_matrix(R)
     
     #print("\n\nVerification that Q * R = A:")     
     #print_matrix(matrix_multiply_matrix(Q,R,n,m))
+
+    Q_2 = matrix_multiply_matrix(tranpose_Q, Q, len(tranpose_Q), len(Q[0]))
+    Q_2 = getMatrixInv(Q_2)
+    R = matrix_multiply_matrix(matrix_multiply_matrix(Q_2, tranpose_Q, m , n), A, m, n)
+
+    #for i in range(len(R)):
+     #   for j in range(len(R[0])):
+     #       if R[i][j] <= 0.0005 and R[i][j] >= -0.0005 :
+     #           R[i][j] = 0
+
+    print(R)
     
     QR = []
     QR.append(Q)
@@ -203,8 +211,10 @@ def get_magnitude_vector(vector_1):
 def vector_divide_mag(vector_1, magnitude):
     result = []
     for i in vector_1:
-     
-        result.append((float)(i/magnitude))
+        if (magnitude == 0.0):
+            result.append(0.0)
+        else:
+            result.append((float)(i/magnitude))
 
     return result
 
@@ -228,6 +238,17 @@ def random_A(m,n):
         result.append(temp)
         
     return result
+
+def matrix_multiply_num(matrix,num):
+    result = []
+    for i in range(len(matrix)):
+        temp = []
+        for x in range(len(matrix[0])):
+            temp.append((float)(matrix[i][x] * num))
+        result.append(temp)
+        temp = []
+    return result            
+        
 
 if __name__ == "__main__":
     #A = [[2,3],[2,4],[1,1]], 

@@ -1,31 +1,40 @@
 from QR_decomp import *
+from rreftest import *
+from Inverse import  *
 
-def getSingularValues(A):
 
-    A_T = transpose(A,len(A),len(A[0]))
-    AAT = matrix_multiply_matrix(A,A_T,len(A),len(A_T[0]))
-    eig = getEigenValues(AAT)
+def getSingularValues(vectors):
+
+    #A_T = transpose(A,len(A),len(A[0]))
+    #AAT = matrix_multiply_matrix(A,A_T,len(A),len(A_T[0]))
+    eig = vectors
     sqrts = []
     for i in eig:
         sqrt = i**(0.5)
         sqrts.append(sqrt)
+    print("Singular Values")
     print(sqrts)
     return sqrts
 
-def getSingularMatrix(A):
-    sing = getSingularValues(A)
+def getSingularMatrix(A, lambdas):
+    result = []
     count = 0
-    length = len(sing)
-    sing_matrix = A
-    for i in range(len(A)):
-        for j in range(len(A[0])):
-            if i == j:
-                sing_matrix[i][j] = sing[count]
-                count = count+1
+    for i in range(len(lambdas)):
+        temp = []
+        for k in range(len(lambdas)):
+            if k == count:
+                temp.append(lambdas[count])
             else:
-                sing_matrix[i][j] = 0
-    print_matrix(sing_matrix)
-    return sing_matrix
+                temp.append(0)
+        result.append(temp)
+        temp = []
+        count +=1
+
+
+
+
+
+    return result
     
 # def getSquareRoots(A):
     # ans = 0
@@ -119,8 +128,52 @@ def repeatQR(A):
         #print("Iteration:")
         #print_matrix(A)
     print("\n\nThe Eigenvalues are approximately:")
-    print(getMatrixDiag(A))
+   # print(getMatrixDiag(A))
     return A
+
+def getEigenVectors(A, eigenvalues):
+    result = []
+    eignvalues_matrix =  []
+
+    if len(A) != len(A[0]):
+        A = matrix_multiply_matrix(A, transpose(A, len(A), len(A[0])),len(A), len(A))
+
+    count = 0
+    for i in range(len(eigenvalues)):
+        e_vector = []
+        diag = 0
+        for x in range(len(A)):
+            temp = []
+        
+            for z in range(len(A[0])):
+                if diag == z:
+                    
+                    temp.append(A[x][z] - eigenvalues[count])
+                else:
+                    temp.append(A[x][z])
+            diag += 1
+            e_vector.append(temp) 
+            temp = []
+
+        count += 1
+        #print("BEFORE rref")
+        #print_matrix(e_vector) 
+        e_vector = rref(e_vector)
+       # print("rref:")
+        #print_matrix(e_vector)
+        result.append(e_vector)
+
+
+        eignvalues_matrix.append(solve_eignvalues(e_vector))
+        
+    V_T = eignvalues_matrix
+
+    return V_T
+    
+                
+
+
+
  
  
 def getEigenValues(A):
@@ -130,11 +183,124 @@ def getEigenValues(A):
     print_matrix(A)
     iterated_a = repeatQR(A)
     eigenvalues = getMatrixDiag(iterated_a)
+    print("Eigenvalues:")
+    print(eigenvalues)
     return eigenvalues
  
+def solve_eignvalues(A):
+    c = []
+    result = []
+  
+
+
+
+    for  i in range(len(A[0])):
+        c.append(0)
+
+    for i in range(len(A)):
+        temp = []
+        for x in range(len(A[0])):
+            temp.append(0)
+        result.append(temp)
+        temp = []
+
+    for i in range(len(A)):
+        eqs = []
+
+        for  v in range(len(A[0])):
+            eqs.append(0)
+        flag = False
+        index = -1
+        for z in range(len(A[0])):
+            if round(A[i][z],1) == 1 and (flag == False):
+                flag =  True
+                index = z
+            elif (flag):
+                if (A[i][z] != 0):
+                    eqs[z] = 0 - A[i][z]
+
+        
+        if ( index != -1):
+            result[i][index] = eqs
+      
+            
+  
+    print_matrix(result)
+
+    vector = []
+    for  v in range(len(A[0])):
+        vector.append(0)
+
+    for i in range(len(result)):
+      
+        flag = True
+        count = 0
+
+        for x in range(len(result[0])):
+  
+            if (result[i][x] != None and result[i][x]!= 0):
+
+                for c in range(len(result[i][x])):
+                    
+                    if (round(result[i][x][c],1) != 0):
+                        vector[x] = (result[i][x][c])
+                        
+    for i in range(len(result[0])):
+        count = 0
+        for x in range(len(result)):
+           
     
+            if  isinstance(result[x][i], list) == False and round(result[x][i],1) == 0:
+                count += 1
+                
+        if count == len(result):
+            vector[i] = 1
+
+
+
+    vector = vector_divide_mag(vector,get_magnitude_vector(vector))
+    return vector
+                    
+def get_transpose_col(A):
+    result = []
+    for i in A:
+        temp = []
+        temp.append(i)
+        result.append(temp)
+
+    return result
+
+
+def get_U(A,V_T,S,lambdas): 
+   # S_inv = getMatrixInv(S)
+    #print(S_inv)
+    #V = transpose(V_T, len(V_T), len(V_T[0]))
+    #A_V = matrix_multiply_matrix(A, V, len(A),len(V[0]) )
+    #A_V_S_INV = matrix_multiply_matrix(A_V, S_inv, len(A_V), len(S_inv[0]))
+
+    result = []
+    for i in range(len(lambdas)):
+        U = (float)(1.0/lambdas[i])
+        U_AT =  matrix_multiply_num(transpose(A, len(A), len(A[0])), U)
     
+        V = get_transpose_col(V_T[i])
+        print("V:")
+        print_matrix(V) 
+        print("U_AT")
+        print_matrix(U_AT)
+        print(len(U_AT))
+        print(len(V[0]))
+        U_AT_EgnVector = matrix_multiply_matrix(U_AT,V , len(U_AT), len(V[0]) )
+        result.append(U_AT_EgnVector)
+    result = transpose(result, len(result), len(result[0]))
+    print_matrix(result)
+
+
+
+
+
     
+
 if __name__ == "__main__":
     #A = [[2,3],[2,4],[1,1]]
     #A = [[2,3, 1], [3,5,1]]
@@ -148,12 +314,21 @@ if __name__ == "__main__":
    
     #repeatQR(A)
     #getMatrixDiag(A)
-    getEigenValues(A)
+    vectors = getEigenValues(A)
     #A = [[9,4], [9,16]]
     #getSquareRoots(A)
     #print_matrix(A)
     #repeatQR(A)
-    getSingularValues(A)
+    lambdas = getSingularValues(vectors)
+    
+    
+    S = getSingularMatrix(A,lambdas)
+
+    print("EigenVectors:")
+    V_T = getEigenVectors(A,vectors)
+    print_matrix(V_T)
+    
+    get_U(A, V_T, S, lambdas )
     
     
     
